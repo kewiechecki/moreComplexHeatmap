@@ -6,33 +6,46 @@
 and writes a dotplot of the results}
 \usage{
 hmdot(
-  odds,
-  fdr,
-  q,
+  mat,
+  outl,
+  size,
+  col.mat,
+  col.outl,
+  scale,
+  mat.name = "log2(OR)",
+  outl.name = "-log10(FDR)",
+  size.name = "size",
   file,
   path = ".",
   cell.dim = 0.15,
   width = 12,
   height = 12,
+  append.date = F,
   ...
 )
 }
 \arguments{
-\item{odds}{A matrix of log2 odds ratios from an enrichment test.}
+\item{mat}{A matrix of values shown by the dot color.}
 
-\item{fdr}{A matrix of FDR values from an enrichment test.}
+\item{outl}{A matrix of values shown by the dot outlline.}
 
-\item{q}{A matrix of test counts for each test.}
+\item{size}{A matrix of values shown by the dot size.}
 
-\item{file}{The output file name.}
+\item{col.mat}{A color scale for \code{mat}.}
 
-\item{path}{The output file path.}
+\item{col.outl}{A color scale for \code{outlline}.}
+
+\item{scale}{A vector of length 2 giving the min and max values to scale the size of the dots.}
+
+\item{file}{The outlput file name.}
+
+\item{path}{The outlput file path.}
 
 \item{cell.dim}{The width & height of each heatmap cell in inches.}
 
-\item{width}{The width of the output device in inches.}
+\item{width}{The width of the outlput device in inches.}
 
-\item{height}{The height of the output device in inches.}
+\item{height}{The height of the outlput device in inches.}
 
 \item{...}{Additional arguments to \code{hm.cell()}.}
 }

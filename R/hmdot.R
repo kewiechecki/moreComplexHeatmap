@@ -4,68 +4,96 @@
 #' @param odds A matrix of log2 odds ratios from an enrichment test.
 #' @param fdr A matrix of FDR values from an enrichment test.
 #' @param q A matrix of test counts for each test.
-#' @param file The output file name.
-#' @param path The output file path.
-#' @param cell.dim The width & height of each heatmap cell in inches.
-#' @param width The width of the output device in inches.
-#' @param height The height of the output device in inches.
-#' @param ... Additional arguments to \code{hm.cell()}.
+#' @param ... Additional arguments to \code{hmdot()}.
 #' @export
-hmdot <- function(odds,fdr,q,file,path='.',cell.dim=.15,width=12,height=12, ...){
+hyperDot <- function(odds, fdr, q, ...){
 	logFDR <- -log10(fdr)
-	#         odds[odds<0] <- 0
 	odds[odds==Inf] <- max(odds[is.finite(odds)])
 	odds[odds==-Inf] <- min(odds[is.finite(odds)])
 	logFDR[!is.finite(logFDR)] <- 0
 
-	#         cexfn <- function(x) unit(min(x/-log10(0.001),1)*cell.dim,'in')
-	cexfn <- function(x) unit((1.5*x/max(q))*cell.dim,'in')
 	col.odds <- col.z(odds)
-	#         col.fdr <- col.abs(logFDR)
 	col.fdr <- colorRamp2(c(0,2),c('white','black'))
+	hmdot(odds, logFDR, q, col.mat=col.odds, col.outl=col.fdr, scale=c(0, max(q)), ...)
+}
+
+#' accepts the results of an enrichment test applied to each cell in a matrix
+#' and writes a dotplot of the results
+
+#' @param mat A matrix of values shown by the dot color.
+#' @param outl A matrix of values shown by the dot outlline.
+#' @param size A matrix of values shown by the dot size.
+#' @param col.mat A color scale for \code{mat}.
+#' @param col.outl A color scale for \code{outlline}.
+#' @param scale A vector of length 2 giving the min and max values to scale the size of the dots.
+#' @param file The outlput file name.
+#' @param path The outlput file path.
+#' @param cell.dim The width & height of each heatmap cell in inches.
+#' @param width The width of the outlput device in inches.
+#' @param height The height of the outlput device in inches.
+#' @param ... Additional arguments to \code{hm.cell()}.
+#' @export
+hmdot <- function(
+	mat, outl, size, 
+	col.mat, col.outl, scale, 
+	mat.name="log2(OR)", outl.name="-log10(FDR)", size.name="size", 
+	file, path='.', cell.dim=.15, width=12, height=12, append.date=F,
+	...
+){
+	#         outl <- -log10(outl)
+	#         mat[mat<0] <- 0
+	mat[mat==Inf] <- max(mat[is.finite(mat)])
+	mat[mat==-Inf] <- min(mat[is.finite(mat)])
+	#         outl[!is.finite(outl)] <- 0
+
+	#         cexfn <- function(x) unit(min(x/-log10(0.001),1)*cell.dim,'in')
+	cexfn <- function(x) unit((1.5*x/max(size))*cell.dim,'in')
+	#         col.mat <- col.z(mat)
+	#         col.outl <- col.abs(outl)
+	#         col.outl <- colorRamp2(c(0,2),c('white','black'))
 	cellfn <- function(j, i, x, y, width, height, fill) {
             grid.points(
 		x = x, y = y, 
-		size=cexfn(q[i, j]),
+		size=cexfn(size[i, j]),
 		pch=16,
                 gp = gpar(
-			col = col.odds(odds[i, j]) 
-			#                         col = col.fdr(logFDR[i, j])
+			col = col.mat(mat[i, j]) 
+			#                         col = col.outl(outl[i, j])
 		)
 	    )
             grid.points(
 		x = x, y = y, 
-		size=cexfn(q[i, j]),
+		size=cexfn(size[i, j]),
 		pch=1,
                 gp = gpar(
-			col = col.fdr(logFDR[i, j])
+			col = col.outl(outl[i, j])
 		)
 	    )
         }
 
-	p.breaks <- c(.001,.005,.01,.05,.1,1)
-	q.breaks <- round(seq(0,max(q),length.out=6))
+	size.breaks <- round(seq(0,max(size),length.out=6))
+	#         mat.breaks <- round(seq(range(attr(col.mat,'breaks'), length.out=6)))
+	#         outl.breaks <- round(seq(range(attr(col.outl,'breaks'), length.out=6)))
 
 	lgd <- list(
-		Legend(col_fun = col.odds, title = "log2(OR)"),
-		Legend(col_fun = col.fdr, title = "-log10(FDR)"),
+		Legend(col_fun = col.mat, title = mat.name),# at=mat.breaks),
+		Legend(col_fun = col.outl, title = outl.name),# at=outl.breaks),
 		Legend(
-			title="q",
-			at=q.breaks,
+			title=size.name,
+			at=size.breaks,
 			type='points',
 			background=0,
 			pch=16,
-			#                         size=unit(sapply(-log10(p.breaks),cexfn),'in'),
-			size=unit(sapply(q.breaks,cexfn),'in'),
+			size=unit(sapply(size.breaks,cexfn),'in'),
 			legend_gp=gpar(col=1,fill=0)
 		)
 	)
 
 	hm <- hm.cell(
-		odds,
+		mat,
 		cell_fun=cellfn,
-		#                 col=colfn,
-		name='log2OR',
+		#                 name='log2OR',
+		#                 col=col.mat,
 		rect_gp = gpar(type = "none"),
 		cell.w=cell.dim,
 		cell.h=cell.dim,
@@ -77,11 +105,13 @@ hmdot <- function(odds,fdr,q,file,path='.',cell.dim=.15,width=12,height=12, ...)
 
 	dir.eps(
 	  file,path,
+	  append.date=append.date,
 	  width=width,
 	  height=height
 	)
 	draw(hm, annotation_legend_list=lgd)
 	dev.off()
 }
+
 
 

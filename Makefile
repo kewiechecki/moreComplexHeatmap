@@ -1,5 +1,4 @@
-install: man NAMESPACE
-	R CMD INSTALL .
-man NAMESPACE: 
+install:
 	Rscript -e "devtools::document()"
+	R CMD INSTALL .
 

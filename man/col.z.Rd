@@ -4,12 +4,14 @@
 \alias{col.z}
 \title{Color scale for a specified quantile. This scale is intended for heatmaps containing negative and positive values, so the range is set to \code{c(quant,1-quant)}.}
 \usage{
-col.z(x, quant = 0.01)
+col.z(x, quant = 0.01, mid = 0)
 }
 \arguments{
 \item{x}{A numeric matrix or vector.}
 
 \item{quant}{The quantile to be used as the scale limits.}
+
+\item{mid}{The midpoint of the scale.}
 }
 \value{
 A \code{colorRamp2} scale which can be passed to \code{Heatmap()}.

@@ -25,11 +25,12 @@ hm.cell <- function(
 #'
 #' @param x A numeric matrix or vector.
 #' @param quant The quantile to be used as the scale limits.
+#' @param mid The midpoint of the scale.
 #' @return A \code{colorRamp2} scale which can be passed to \code{Heatmap()}.
 #' @export
-col.z <- function(x,quant=.01) {
+col.z <- function(x,quant=.01, mid=0) {
 	colorRamp2(
-	      c(quantile(x,quant),0,quantile(x,1-quant)),
+	      c(quantile(x,quant),mid,quantile(x,1-quant)),
 	      c('blue','white','red')
 	)
 }

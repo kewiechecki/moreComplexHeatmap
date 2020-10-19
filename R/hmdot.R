@@ -14,7 +14,33 @@ hyperDot <- function(odds, fdr, q, ...){
 
 	col.odds <- col.z(odds)
 	col.fdr <- colorRamp2(c(0,2),c('white','black'))
-	hmdot(odds, logFDR, q, col.mat=col.odds, col.outl=col.fdr, scale=c(0, max(q)), ...)
+	size.breaks <- round(seq(0,max(q),length.out=6))
+	hmdot(odds, logFDR, q, col.mat=col.odds, col.outl=col.fdr, scale=c(0, max(q)), size.breaks=size.breaks, ...)
+}
+
+#' Version of hyperDot using p-value instead of number of replicates for dot size.
+#' accepts the results of an enrichment test applied to each cell in a matrix
+#' and writes a dotplot of the results
+
+#' @param odds A matrix of log2 odds ratios from an enrichment test.
+#' @param fdr A matrix of FDR values from an enrichment test.
+#' @param q A matrix of test counts for each test.
+#' @param plim Maximum p-value on the size scale. Values above \code{plim} are set to \code{plim}.
+#' @param ... Additional arguments to \code{hmdot()}.
+#' @export
+dotPscale <- function(odds, fdr, q, plim=0.01,...){
+	fdr[which(fdr<plim)] <- plim
+	logFDR <- -log10(fdr)
+	odds[odds==Inf] <- max(odds[is.finite(odds)])
+	odds[odds==-Inf] <- min(odds[is.finite(odds)])
+	logFDR[!is.finite(logFDR)] <- 0
+
+	col.odds <- col.z(odds)
+	col.outl <- colorRamp2(c(0,max(q)),c('white','black'))
+
+	size.breaks <- seq(1, -log10(plim), length.out=6)
+
+	hmdot(odds, logFDR, q, col.mat=col.odds, col.outl=col.outl, scale=c(0, max(q)), size.breaks=size.breaks, ...)
 }
 
 #' accepts the results of an enrichment test applied to each cell in a matrix
@@ -35,7 +61,7 @@ hyperDot <- function(odds, fdr, q, ...){
 #' @export
 hmdot <- function(
 	mat, outl, size, 
-	col.mat, col.outl, scale, 
+	col.mat, col.outl, scale, size.breaks,
 	mat.name="log2(OR)", outl.name="-log10(FDR)", size.name="size", 
 	file, path='.', cell.dim=.15, width=12, height=12, append.date=F,
 	...
@@ -71,7 +97,6 @@ hmdot <- function(
 	    )
         }
 
-	size.breaks <- round(seq(0,max(size),length.out=6))
 	#         mat.breaks <- round(seq(range(attr(col.mat,'breaks'), length.out=6)))
 	#         outl.breaks <- round(seq(range(attr(col.outl,'breaks'), length.out=6)))
 

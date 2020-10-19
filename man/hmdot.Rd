@@ -12,6 +12,7 @@ hmdot(
   col.mat,
   col.outl,
   scale,
+  size.breaks,
   mat.name = "log2(OR)",
   outl.name = "-log10(FDR)",
   size.name = "size",

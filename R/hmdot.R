@@ -28,9 +28,10 @@ hyperDot <- function(odds, fdr, q, ...){
 #' @param plim Maximum p-value on the size scale. Values above \code{plim} are set to \code{plim}.
 #' @param ... Additional arguments to \code{hmdot()}.
 #' @export
-dotPscale <- function(odds, fdr, q, plim=0.01,...){
+dotPscale <- function(odds, fdr, q, plim=0.01, outl.name='size', size.name='-log10(FDR)', ...){
 	fdr[which(fdr<plim)] <- plim
 	logFDR <- -log10(fdr)
+	odds[is.na(odds)] <- 0
 	odds[odds==Inf] <- max(odds[is.finite(odds)])
 	odds[odds==-Inf] <- min(odds[is.finite(odds)])
 	logFDR[!is.finite(logFDR)] <- 0
@@ -38,9 +39,20 @@ dotPscale <- function(odds, fdr, q, plim=0.01,...){
 	col.odds <- col.z(odds)
 	col.outl <- colorRamp2(c(0,max(q)),c('white','black'))
 
-	size.breaks <- seq(1, -log10(plim), length.out=6)
+	size.breaks <- seq(0, -log10(plim), length.out=6)
 
-	hmdot(odds, logFDR, q, col.mat=col.odds, col.outl=col.outl, scale=c(0, max(q)), size.breaks=size.breaks, ...)
+	hmdot(
+	      odds, 
+	      q, 
+	      logFDR, 
+	      col.mat=col.odds, 
+	      col.outl=col.outl, 
+	      scale=c(0, max(q)), 
+	      size.breaks=size.breaks,
+	      outl.name=outl.name,
+	      size.name=size.name,
+	      ...
+	)
 }
 
 #' accepts the results of an enrichment test applied to each cell in a matrix
@@ -59,6 +71,7 @@ dotPscale <- function(odds, fdr, q, plim=0.01,...){
 #' @param height The height of the outlput device in inches.
 #' @param ... Additional arguments to \code{hm.cell()}.
 #' @export
+#' @importFrom grid gpar unit grid.points
 hmdot <- function(
 	mat, outl, size, 
 	col.mat, col.outl, scale, size.breaks,
@@ -73,7 +86,7 @@ hmdot <- function(
 	#         outl[!is.finite(outl)] <- 0
 
 	#         cexfn <- function(x) unit(min(x/-log10(0.001),1)*cell.dim,'in')
-	cexfn <- function(x) unit((1.5*x/max(size))*cell.dim,'in')
+	cexfn <- function(x) unit((1.2*x/max(size))*cell.dim,'in')
 	#         col.mat <- col.z(mat)
 	#         col.outl <- col.abs(outl)
 	#         col.outl <- colorRamp2(c(0,2),c('white','black'))
@@ -122,8 +135,8 @@ hmdot <- function(
 		rect_gp = gpar(type = "none"),
 		cell.w=cell.dim,
 		cell.h=cell.dim,
-		show_column_dend=F,
-		show_row_dend=F,
+		#                 show_column_dend=F,
+		#                 show_row_dend=F,
 		show_heatmap_legend=F,
 		...
 	)

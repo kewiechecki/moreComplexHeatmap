@@ -8,6 +8,7 @@
 #' @param width The heatmap width. Ignored if \code{cell.w} is specified.
 #' @param units The unit scale to be used for \code{cell.h} and \code{cell.w}.
 #' @return A ComplexHeatmap.
+#' @import ComplexHeatmap
 #' @export
 hm.cell <- function(
 		x,...,
@@ -27,10 +28,11 @@ hm.cell <- function(
 #' @param quant The quantile to be used as the scale limits.
 #' @param mid The midpoint of the scale.
 #' @return A \code{colorRamp2} scale which can be passed to \code{Heatmap()}.
+#' @importFrom circlize colorRamp2
 #' @export
 col.z <- function(x,quant=.01, mid=0) {
 	colorRamp2(
-	      c(quantile(x,quant),mid,quantile(x,1-quant)),
+	      c(quantile(x, quant, na.rm=T),mid,quantile(x, 1-quant, na.rm=T)),
 	      c('blue','white','red')
 	)
 }
@@ -42,7 +44,7 @@ col.z <- function(x,quant=.01, mid=0) {
 #' @return A \code{colorRamp2} scale which can be passed to \code{Heatmap()}.
 #' @export
 col.abs <- function(x,quant=.05){
-	colorRamp2(c(0,quantile(x[x!=0],1-quant)),c('white','black'))
+	colorRamp2(c(0,quantile(x[x!=0],1-quant), na.rm=T),c('white','black'))
 }
 
 #' Color scale for categorical data.

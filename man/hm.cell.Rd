@@ -11,8 +11,6 @@ hm.cell(
   cell.w = NULL,
   height = NULL,
   width = NULL,
-  heatmap_height = NULL,
-  heatmap_width = NULL,
   units = "in"
 )
 }

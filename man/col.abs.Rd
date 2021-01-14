@@ -4,12 +4,14 @@
 \alias{col.abs}
 \title{Color scale for a specified quantile. This scale is intended for heatmaps containing only positive values, so the range is set to \code{c(0,1-quant)}.}
 \usage{
-col.abs(x, quant = 0.05)
+col.abs(x, quant = 0.05, cols = c("white", "black"))
 }
 \arguments{
 \item{x}{A numeric matrix or vector.}
 
 \item{quant}{The quantile to be used as the upper limit.}
+
+\item{cols}{The colors used for the color scale.}
 }
 \value{
 A \code{colorRamp2} scale which can be passed to \code{Heatmap()}.

@@ -4,7 +4,7 @@
 \alias{col.z}
 \title{Color scale for a specified quantile. This scale is intended for heatmaps containing negative and positive values, so the range is set to \code{c(quant,1-quant)}.}
 \usage{
-col.z(x, quant = 0.01, mid = 0)
+col.z(x, quant = 0.01, mid = 0, cols = c("blue", "white", "red"))
 }
 \arguments{
 \item{x}{A numeric matrix or vector.}

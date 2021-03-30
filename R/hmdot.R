@@ -37,7 +37,9 @@ dotPscale <- function(odds, fdr, q, plim=0.01, outl.name='size', size.name='-log
 	logFDR[!is.finite(logFDR)] <- 0
 
 	col.odds <- col.z(odds)
-	col.outl <- colorRamp2(c(0,max(q)),c('white','black'))
+
+	qscale <- c(0,quantile(as.matrix(q)[as.matrix(q)!=0], 0.95))
+	col.outl <- colorRamp2(qscale ,c('white','black'))
 
 	size.breaks <- seq(0, -log10(plim), length.out=6)
 
@@ -47,7 +49,7 @@ dotPscale <- function(odds, fdr, q, plim=0.01, outl.name='size', size.name='-log
 	      logFDR, 
 	      col.mat=col.odds, 
 	      col.outl=col.outl, 
-	      scale=c(0, max(q)), 
+	      scale=qscale, 
 	      size.breaks=size.breaks,
 	      outl.name=outl.name,
 	      size.name=size.name,
@@ -141,7 +143,7 @@ hmdot <- function(
 		...
 	)
 
-	dir.eps(
+	dir.pdf(
 	  file,path,
 	  append.date=append.date,
 	  width=width,

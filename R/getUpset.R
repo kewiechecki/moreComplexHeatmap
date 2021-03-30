@@ -11,22 +11,22 @@ combSel <- function(id) as.logical(
 #' @param x The intersect size.
 #' @param id The intersect names.
 #' @param mat The logical matrix of intersections.
-#' @param n The universe size.
+#' @param N The universe size.
 #' @return A numeric vector containing the log2 odds ratio and p-value of binomial test.
 #' @import ComplexHeatmap
-getOR <- function(x,id,mat,n=NA) {
+getOR <- function(x,id,mat,N=NA) {
   sel <- combSel(id)
-  if(is.na(n)) n <- sum(comb_size(mat))
+  if(is.na(N)) N <- sum(comb_size(mat))
   s <- set_size(mat)
   if(all(sel)) {
-    expected <- Reduce('*',s[sel]/n)
+    expected <- Reduce('*',s[sel]/N)
   } else if(all(!sel)){
-    expected <- Reduce('*',1-s[!sel]/n)
+    expected <- Reduce('*',1-s[!sel]/N)
   } else {
-    expected <- (Reduce('*',s[sel]/n)*Reduce('*',1-s[!sel]/n))
+    expected <- (Reduce('*',s[sel]/N)*Reduce('*',1-s[!sel]/N))
   }
-  or <- (x/n)/expected
-  p <- binom.test(x,n,expected)$p.value
+  or <- (x/N)/expected
+  p <- binom.test(x,N,expected)$p.value
   return(c(log2OR=log2(or),p=p))
 }
 
@@ -73,13 +73,13 @@ addColKey <- function(name,colfn) AnnotationFunction(
 #'
 #' @param ls A list of sets to be plotted
 #' @param file The output file
-#' @param n The unverse size. Defaults to the number of unique elements.
+#' @param N The unverse size. Defaults to the number of unique elements.
 #' @param combColFn A function defining the color mapping of intersections.
 #' @param ... Additional arguments to \link{\code{ComplexHeatmap::make_comb_mat()}}.
 #' @return A Heatmap object.
 #' @importFrom circlize colorRamp2
 #' @export
-getUpset <- function(ls,file,n=NA,combColFn=function(x) "black",...,setClust=F){
+getUpset <- function(ls,file,N=NA,combColFn=function(x) "black",...,setClust=F){
   mat <- make_comb_mat(ls,...)
   sel <- sapply(comb_name(mat),combSel)
   combSets <- apply(sel,2,function(x) set_name(mat)[x])
@@ -88,7 +88,7 @@ getUpset <- function(ls,file,n=NA,combColFn=function(x) "black",...,setClust=F){
     getOR,
     comb_size(mat),
     comb_name(mat),
-    MoreArgs = list(mat=mat,n=n)
+    MoreArgs = list(mat=mat,N=N)
   )
   p <- -log10(p.adjust(or['p',],'fdr'))
   comb_order <- order(or[1,],decreasing = T)
@@ -115,18 +115,18 @@ getUpset <- function(ls,file,n=NA,combColFn=function(x) "black",...,setClust=F){
   colNheight <- max(nchar(colNlab))*.1
   rowann <- rowAnnotation(
     npeaks = upsetAnnoBar(comb_size(mat)),
-    n=anno_text(rowNlab,width=unit(rowNwidth,'in')),
+    N=anno_text(rowNlab,width=unit(rowNwidth,'in')),
     log2OddsRatio=upsetAnnoBar(
       or[1,],
       gp=gpar(
         fill=colfn(p),
         col=colfn(p)
       )
-    ),
-    key=addColKey('-log10(FDR)',colfn)
+    )
+			  #     key=addColKey('-log10(FDR)',colfn)
   )
   colann <- columnAnnotation(
-    n=anno_text(colNlab,height = unit(colNheight,'in')),
+    N=anno_text(colNlab,height = unit(colNheight,'in')),
     npeaks=upsetAnnoBar(set_size(mat))
   )
   hmHeight <- ncol(mat)*.25+max(nchar(row.names(mat)))*.1+colNheight
@@ -143,8 +143,8 @@ getUpset <- function(ls,file,n=NA,combColFn=function(x) "black",...,setClust=F){
     comb_order = comb_order,
     comb_col = comb_col
   )
-  dir.eps(file,height=hmHeight+2,width=hmWidth+4)
-  draw(hm)
+  dir.pdf(file,height=hmHeight+2,width=hmWidth+4)
+  draw(hm, annotation_legend_list=list(Legend(col_fun=colfn, title='-log10(FDR)')))
   decorate_annotation('log2OddsRatio',{
     grid.lines(
       c(0,0),c(1,length(comb_col)),

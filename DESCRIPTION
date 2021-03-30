@@ -1,6 +1,6 @@
 Package: moreComplexHeatmap
 Title: Additional functionality for the ComplexHeatmap package.
-Version: 0.0.1
+Version: 0.0.3
 Authors@R: 
     person(given = "Keira",
            family = "Wiechecki",

@@ -38,6 +38,7 @@ dotPscale <- function(odds, fdr, q, plim=0.01, outl.name='size', size.name='-log
 
 	col.odds <- col.z(odds)
 
+	q[!is.finite(q)] <- 0
 	qscale <- c(0,quantile(as.matrix(q)[as.matrix(q)!=0], 0.95))
 	col.outl <- colorRamp2(qscale ,c('white','black'))
 
@@ -83,6 +84,7 @@ hmdot <- function(
 ){
 	#         outl <- -log10(outl)
 	#         mat[mat<0] <- 0
+	mat[is.na(mat)] <- 0
 	mat[mat==Inf] <- max(mat[is.finite(mat)])
 	mat[mat==-Inf] <- min(mat[is.finite(mat)])
 	#         outl[!is.finite(outl)] <- 0

@@ -137,7 +137,7 @@ getUpset <- function(ls,file,N=NA,combColFn=function(x) "black",...,setClust=F){
     heatmap_height=unit(hmHeight+1,'in'),
     right_annotation = rowann,
     top_annotation = colann,
-    col=colfn,
+    #col=colfn,
     name='-log10(FDR)',
     set_order = set_order,
     comb_order = comb_order,

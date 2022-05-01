@@ -1,6 +1,6 @@
 Package: moreComplexHeatmap
 Title: Additional functionality for the ComplexHeatmap package.
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: 
     person(given = "Keira",
            family = "Wiechecki",
@@ -12,7 +12,7 @@ License: `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends:
     R (>= 3.6),
     circlize,

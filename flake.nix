@@ -41,6 +41,7 @@
 
           # C‑library dependencies
           buildInputs = [
+			pkgs.libpng
           ];
 
 		  preBuild = ''
@@ -71,9 +72,13 @@
 			  io
               rpkgs.circlize
               rpkgs.ComplexHeatmap
+			  pkgs.libpng
             ];
             shellHook = ''
 source ${pkgs.git}/share/bash-completion/completions/git-prompt.sh
+
+export LD_LIBRARY_PATH="${pkgs.libpng.out}/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="${pkgs.libpng.out}/lib:$PKG_CONFIG_PATH"
             '';
           };
         };

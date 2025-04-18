@@ -21,7 +21,7 @@
       let
         pkgs  = import nixpkgs { inherit system; config.allowUnfree = true; };
         rpkgs = pkgs.rPackages;
-        io = dirfns.defaultPackage.${system};
+        fileIO = dirfns.defaultPackage.${system};
 
         myPkg = rpkgs.buildRPackage rec {
           name    = "moreComplexHeatmap";
@@ -30,6 +30,7 @@
 
           # R‐side dependencies:
           propagatedBuildInputs = [
+		      fileIO
               rpkgs.circlize
               rpkgs.ComplexHeatmap
           ];
@@ -69,7 +70,7 @@
             buildInputs = [
               pkgs.git
               pkgs.R
-			  io
+			  fileIO
               rpkgs.circlize
               rpkgs.ComplexHeatmap
 			  pkgs.libpng

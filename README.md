@@ -11,5 +11,6 @@ make
 ## Usage
 
 ```R
+library(moreComplexHeatmap)
 
 ```

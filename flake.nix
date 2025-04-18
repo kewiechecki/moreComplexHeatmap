@@ -24,7 +24,7 @@
         fileIO = dirfns.defaultPackage.${system};
 
         myPkg = rpkgs.buildRPackage rec {
-          name    = "moreComplexHeatmap";
+          pname    = "moreComplexHeatmap";
           version = "0.0.4";
           src     = ./.;
 
@@ -49,6 +49,11 @@
 		  make build
 		  #mv build $out
 		  '';
+
+          installPhase = ''
+            # install the tarball into $out, with dirfns present
+            R CMD INSTALL --library=$out .
+          '';
 
           # re‑enable Nix’s R-wrapper so it injects R_LD_LIBRARY_PATH
           dontUseSetLibPath = false;

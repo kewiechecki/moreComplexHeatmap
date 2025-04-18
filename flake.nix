@@ -47,7 +47,7 @@
 
 		  preBuild = ''
 		  make build
-		  mv build $out
+		  #mv build $out
 		  '';
 
           # re‑enable Nix’s R-wrapper so it injects R_LD_LIBRARY_PATH

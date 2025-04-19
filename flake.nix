@@ -24,6 +24,7 @@
         fileIO = dirfns.defaultPackage.${system};
 
         myPkg = rpkgs.buildRPackage rec {
+          name    = "moreComplexHeatmap";
           pname    = "moreComplexHeatmap";
           version = "0.0.4";
           src     = ./.;
